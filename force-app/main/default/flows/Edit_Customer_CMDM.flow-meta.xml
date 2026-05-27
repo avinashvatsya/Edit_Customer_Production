@@ -189,6 +189,24 @@
             </value>
         </inputParameters>
         <inputParameters>
+            <name>aaMembershipNumber</name>
+            <value>
+                <elementReference>var_EditAccount.MembershipNumber__c</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>aaMembershipStartDate</name>
+            <value>
+                <elementReference>frm_MembershipDateText</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>membershipChanged</name>
+            <value>
+                <elementReference>frm_MembershipChanged</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
             <name>streetType</name>
             <value>
                 <elementReference>var_StreetType</elementReference>
@@ -386,6 +404,20 @@
                 <elementReference>var_OrigAccount.FinServ__Gender__pc</elementReference>
             </value>
         </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_EditAccount.MembershipNumber__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>var_OrigAccount.MembershipNumber__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_EditAccount.MembershipJoinDate__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>var_OrigAccount.MembershipJoinDate__c</elementReference>
+            </value>
+        </assignmentItems>
         <connector>
             <targetReference>Screen_Edit_Fields</targetReference>
         </connector>
@@ -470,6 +502,20 @@
             <operator>Assign</operator>
             <value>
                 <elementReference>Gender_Input</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_EditAccount.MembershipNumber__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>MembershipNumber_Input</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_EditAccount.MembershipJoinDate__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>MembershipJoinDate_Input</elementReference>
             </value>
         </assignmentItems>
         <connector>
@@ -621,7 +667,17 @@
     <formulas>
         <name>frm_AnyFieldChanged</name>
         <dataType>Boolean</dataType>
-        <expression>{!frm_NameChanged} || {!frm_TitleChanged} || {!frm_PreferredNameChanged} || {!frm_GenderChanged} || {!frm_DOBChanged} || {!frm_MarketingConsentChanged} || {!frm_MobileChanged} || {!frm_EmailChanged} || {!frm_AddressChanged}</expression>
+        <expression>{!frm_NameChanged} || {!frm_TitleChanged} || {!frm_PreferredNameChanged} || {!frm_GenderChanged} || {!frm_DOBChanged} || {!frm_MarketingConsentChanged} || {!frm_MobileChanged} || {!frm_EmailChanged} || {!frm_AddressChanged} || {!frm_MembershipChanged}</expression>
+    </formulas>
+    <formulas>
+        <name>frm_MembershipChanged</name>
+        <dataType>Boolean</dataType>
+        <expression>OR( BLANKVALUE({!var_OrigAccount.MembershipNumber__c},"") &lt;&gt; BLANKVALUE({!var_EditAccount.MembershipNumber__c},""), {!var_OrigAccount.MembershipJoinDate__c} &lt;&gt; {!var_EditAccount.MembershipJoinDate__c} )</expression>
+    </formulas>
+    <formulas>
+        <name>frm_MembershipDateText</name>
+        <dataType>String</dataType>
+        <expression>IF( ISBLANK({!var_EditAccount.MembershipJoinDate__c}), "", TEXT(MONTH({!var_EditAccount.MembershipJoinDate__c})) + "/" + TEXT(YEAR({!var_EditAccount.MembershipJoinDate__c})) )</expression>
     </formulas>
     <formulas>
         <name>frm_HasInstructions</name>
@@ -676,6 +732,8 @@
         <queriedFields>FinServ__PreferredName__pc</queriedFields>
         <queriedFields>FinServ__Gender__pc</queriedFields>
         <queriedFields>MarketingConsent__c</queriedFields>
+        <queriedFields>MembershipNumber__c</queriedFields>
+        <queriedFields>MembershipJoinDate__c</queriedFields>
         <queriedFields>IsPersonAccount</queriedFields>
         <queriedFields>Name</queriedFields>
     </recordLookups>
@@ -862,6 +920,26 @@
                         <elementReference>var_EditAccount.PersonEmail</elementReference>
                     </defaultValue>
                     <fieldText>Email</fieldText>
+                    <fieldType>InputField</fieldType>
+                    <isRequired>false</isRequired>
+                </fields>
+                <fields>
+                    <name>MembershipNumber_Input</name>
+                    <dataType>String</dataType>
+                    <defaultValue>
+                        <elementReference>var_EditAccount.MembershipNumber__c</elementReference>
+                    </defaultValue>
+                    <fieldText>AA Membership Number</fieldText>
+                    <fieldType>InputField</fieldType>
+                    <isRequired>false</isRequired>
+                </fields>
+                <fields>
+                    <name>MembershipJoinDate_Input</name>
+                    <dataType>Date</dataType>
+                    <defaultValue>
+                        <elementReference>var_EditAccount.MembershipJoinDate__c</elementReference>
+                    </defaultValue>
+                    <fieldText>AA Membership Join Date</fieldText>
                     <fieldType>InputField</fieldType>
                     <isRequired>false</isRequired>
                 </fields>
@@ -1308,6 +1386,21 @@
                 <conditionLogic>and</conditionLogic>
                 <conditions>
                     <leftValueReference>frm_AddressChanged</leftValueReference>
+                    <operator>EqualTo</operator>
+                    <rightValue>
+                        <booleanValue>true</booleanValue>
+                    </rightValue>
+                </conditions>
+            </visibilityRule>
+        </fields>
+        <fields>
+            <name>Sum_Membership</name>
+            <fieldText>&lt;table style="width:100%; border-collapse:collapse;"&gt;&lt;tr&gt;&lt;td style="width:25%; padding:8px 12px; border-bottom:1px solid #e5e5e5; vertical-align:top;"&gt;&lt;b&gt;AA Membership&lt;/b&gt;&lt;/td&gt;&lt;td style="width:37.5%; padding:8px 12px; border-bottom:1px solid #e5e5e5; color:#706e6b; vertical-align:top;"&gt;{!var_OrigAccount.MembershipNumber__c} ({!var_OrigAccount.MembershipJoinDate__c})&lt;/td&gt;&lt;td style="width:37.5%; padding:8px 12px; border-bottom:1px solid #e5e5e5; color:#0070d2; font-weight:600; vertical-align:top;"&gt;{!var_EditAccount.MembershipNumber__c} ({!var_EditAccount.MembershipJoinDate__c})&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+            <visibilityRule>
+                <conditionLogic>and</conditionLogic>
+                <conditions>
+                    <leftValueReference>frm_MembershipChanged</leftValueReference>
                     <operator>EqualTo</operator>
                     <rightValue>
                         <booleanValue>true</booleanValue>
