@@ -15,6 +15,10 @@ public with sharing class EditCustomerCMDMCalloutV2 {
     private static final String CLIENT_VERSION   = '1';
     private static final String CONTENT_TYPE     = 'application/vnd.api+json';
     private static final Integer TIMEOUT_MS      = 120000;
+    // TODO confirm exact channelCode / consentAbbr values with CMDM team
+    private static final String CONSENT_CHANNEL_TYPE = 'email';
+    private static final String CONSENT_CHANNEL_CODE = 'EMAIL';
+    private static final String CONSENT_CONSENT_ABBR = 'MKTG';
 
     public class EditCustomerRequest {
         @InvocableVariable public Id     accountId;
@@ -116,10 +120,63 @@ public with sharing class EditCustomerCMDMCalloutV2 {
             } else {
                 resp.errorMessage = parseError(hr.getBody(), hr.getStatusCode());
             }
+
+            // Second call: PATCH consents endpoint when marketing consent changed.
+            // Only fires if the main customer PATCH succeeded.
+            if (resp.isSuccess && req.marketingConsentChanged == true && String.isNotBlank(req.marketingConsent)) {
+                String consentBody = JSON.serialize(buildConsentPayload(acc.SourceSystemId__c, req.marketingConsent), true);
+                System.debug('CMDM V2 consent PATCH body: ' + consentBody);
+                HttpResponse consentHr = sendConsentPatch(acc.SourceSystemId__c, consentBody);
+                System.debug('CMDM V2 consent response: ' + consentHr.getStatusCode()
+                    + ' body=' + consentHr.getBody());
+                if (consentHr.getStatusCode() < 200 || consentHr.getStatusCode() >= 300) {
+                    resp.isSuccess = false;
+                    resp.statusCode = consentHr.getStatusCode();
+                    resp.errorMessage = 'Customer details updated but marketing consent update failed: '
+                        + parseError(consentHr.getBody(), consentHr.getStatusCode());
+                }
+            }
         } catch (Exception e) {
             resp.errorMessage = e.getMessage();
         }
         return resp;
+    }
+
+    private static HttpResponse sendConsentPatch(String cmdmId, String body) {
+        String endpoint = NAMED_CREDENTIAL + BASE_PATH + BRAND + '/customers/' + cmdmId + '/consents';
+        HttpRequest http = new HttpRequest();
+        http.setEndpoint(endpoint);
+        http.setMethod('PATCH');
+        http.setTimeout(TIMEOUT_MS);
+        http.setHeader('Content-Type', CONTENT_TYPE);
+        http.setHeader('Accept', CONTENT_TYPE);
+        http.setHeader('X-Client-Id', CLIENT_ID);
+        http.setHeader('X-Client-Version', CLIENT_VERSION);
+        http.setHeader('X-Request-Id', 'SF-' + String.valueOf(Datetime.now().getTime()));
+        http.setBody(body);
+        return new Http().send(http);
+    }
+
+    private static Map<String, Object> buildConsentPayload(String cmdmId, String marketingConsent) {
+        return new Map<String, Object>{
+            'data' => new Map<String, Object>{
+                'id'         => cmdmId,
+                'attributes' => new Map<String, Object>{
+                    'channels' => new List<Object>{
+                        new Map<String, Object>{
+                            'channelType' => CONSENT_CHANNEL_TYPE,
+                            'consent'     => mapConsent(marketingConsent),
+                            'channelCode' => CONSENT_CHANNEL_CODE,
+                            'consentAbbr' => CONSENT_CONSENT_ABBR
+                        }
+                    }
+                }
+            }
+        };
+    }
+
+    private static String mapConsent(String marketingConsent) {
+        return 'Yes'.equalsIgnoreCase(marketingConsent) ? 'yes' : 'no';
     }
 
     // ─────────────────────────────────────────────────────────────

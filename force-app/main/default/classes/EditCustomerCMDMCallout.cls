@@ -12,12 +12,17 @@ public with sharing class EditCustomerCMDMCallout {
     private static final String NAMED_CRED  = 'callout:PolicyClaimCustomerSystem';
     private static final String BRAND       = 'AAINZ';
     private static final String BASE_PATH   = '/customer-api/v3/brands/';
+    private static final String CONSENTS_BASE_PATH = '/customer-api/v2/brands/';
     private static final String CLIENT_ID   = 'AAICRM';
     private static final String CLIENT_VER  = '1';
     private static final String MEDIA_TYPE  = 'application/vnd.api+json';
     private static final Integer TIMEOUT_MS = 30000;
     private static final String SOURCE_SYSTEM_CODE = 'CRM';   // max 3 chars
     private static final Integer MAX_LAST_MODIFIED_BY = 20;
+    // TODO confirm exact channelCode / consentAbbr values with CMDM team
+    private static final String CONSENT_CHANNEL_TYPE = 'email';
+    private static final String CONSENT_CHANNEL_CODE = 'EMAIL';
+    private static final String CONSENT_CONSENT_ABBR = 'MKTG';
 
     public class EditCustomerRequest {
         @InvocableVariable(required=true) public String accountId;
@@ -100,6 +105,22 @@ public with sharing class EditCustomerCMDMCallout {
                 resp.isSuccess = false;
                 resp.errorMessage = parseErrorMessage(httpResp);
             }
+
+            // Second call: PATCH consents endpoint when marketing consent changed.
+            // Only fires if the main customer PATCH succeeded.
+            if (resp.isSuccess && req.marketingConsentChanged == true && String.isNotBlank(req.marketingConsent)) {
+                String consentBody = JSON.serialize(buildConsentPayload(acc.SourceSystemId__c, req.marketingConsent), true);
+                System.debug(LoggingLevel.INFO, 'CMDM consent PATCH payload: ' + consentBody);
+                HttpResponse consentResp = sendConsentPatch(acc.SourceSystemId__c, consentBody);
+                System.debug(LoggingLevel.INFO, 'CMDM consent response: ' + consentResp.getStatusCode()
+                    + ' body=' + consentResp.getBody());
+                if (consentResp.getStatusCode() < 200 || consentResp.getStatusCode() >= 300) {
+                    resp.isSuccess = false;
+                    resp.responseCode = consentResp.getStatusCode();
+                    resp.errorMessage = 'Customer details updated but marketing consent update failed: '
+                        + parseErrorMessage(consentResp);
+                }
+            }
         } catch (Exception e) {
             resp.isSuccess = false;
             resp.errorMessage = e.getTypeName() + ': ' + e.getMessage();
@@ -121,6 +142,42 @@ public with sharing class EditCustomerCMDMCallout {
         req.setBody(body);
         req.setTimeout(TIMEOUT_MS);
         return new Http().send(req);
+    }
+
+    private static HttpResponse sendConsentPatch(String cmdmId, String body) {
+        HttpRequest req = new HttpRequest();
+        req.setEndpoint(NAMED_CRED + CONSENTS_BASE_PATH + BRAND + '/customers/' + cmdmId + '/consents');
+        req.setMethod('PATCH');
+        req.setHeader('Content-Type',    MEDIA_TYPE);
+        req.setHeader('Accept',          MEDIA_TYPE);
+        req.setHeader('X-Client-Id',     CLIENT_ID);
+        req.setHeader('X-Client-Version',CLIENT_VER);
+        req.setHeader('X-Request-Id',    'SF-' + UserInfo.getOrganizationId() + '-' + Datetime.now().getTime());
+        req.setBody(body);
+        req.setTimeout(TIMEOUT_MS);
+        return new Http().send(req);
+    }
+
+    private static Map<String, Object> buildConsentPayload(String cmdmId, String marketingConsent) {
+        return new Map<String, Object>{
+            'data' => new Map<String, Object>{
+                'id'         => cmdmId,
+                'attributes' => new Map<String, Object>{
+                    'channels' => new List<Object>{
+                        new Map<String, Object>{
+                            'channelType' => CONSENT_CHANNEL_TYPE,
+                            'consent'     => mapConsent(marketingConsent),
+                            'channelCode' => CONSENT_CHANNEL_CODE,
+                            'consentAbbr' => CONSENT_CONSENT_ABBR
+                        }
+                    }
+                }
+            }
+        };
+    }
+
+    private static String mapConsent(String marketingConsent) {
+        return 'Yes'.equalsIgnoreCase(marketingConsent) ? 'yes' : 'no';
     }
 
     private static Map<String, Object> buildPayload(EditCustomerRequest req, Account acc) {
