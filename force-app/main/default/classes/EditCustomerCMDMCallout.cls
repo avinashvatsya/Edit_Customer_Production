@@ -9,7 +9,7 @@
  */
 public with sharing class EditCustomerCMDMCallout {
 
-    private static final String NAMED_CRED  = 'callout:PolicyClaimCustomerSystem';
+    private static final String NAMED_CRED  = 'callout:PolicySummaryV4';
     private static final String BRAND       = 'AAINZ';
     private static final String BASE_PATH   = '/customer-api/v3/brands/';
     private static final String CONSENTS_BASE_PATH = '/customer-api/v2/brands/';
@@ -163,6 +163,7 @@ public with sharing class EditCustomerCMDMCallout {
             'data' => new Map<String, Object>{
                 'id'         => cmdmId,
                 'attributes' => new Map<String, Object>{
+                    'brand'    => BRAND,
                     'channels' => new List<Object>{
                         new Map<String, Object>{
                             'channelType' => CONSENT_CHANNEL_TYPE,
@@ -213,7 +214,10 @@ public with sharing class EditCustomerCMDMCallout {
             'data' => new Map<String, Object>{
                 'id'    => acc.SourceSystemId__c,
                 'type'  => isPerson ? 'Individual' : 'Organisation',
-                'attributes' => new Map<String, Object>{ 'partyDetails' => partyDetails }
+                'attributes' => new Map<String, Object>{
+                    'brand'        => BRAND,
+                    'partyDetails' => partyDetails
+                }
             }
         };
     }

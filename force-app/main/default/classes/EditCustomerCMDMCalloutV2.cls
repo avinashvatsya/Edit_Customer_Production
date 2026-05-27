@@ -8,7 +8,7 @@
  */
 public with sharing class EditCustomerCMDMCalloutV2 {
 
-    private static final String NAMED_CREDENTIAL = 'callout:PolicyClaimCustomerSystem';
+    private static final String NAMED_CREDENTIAL = 'callout:PolicySummaryV4';
     private static final String BRAND            = 'AAINZ';
     private static final String BASE_PATH        = '/customer-api/v2/brands/';
     private static final String CLIENT_ID        = 'AAICRM';
@@ -162,6 +162,7 @@ public with sharing class EditCustomerCMDMCalloutV2 {
             'data' => new Map<String, Object>{
                 'id'         => cmdmId,
                 'attributes' => new Map<String, Object>{
+                    'brand'    => BRAND,
                     'channels' => new List<Object>{
                         new Map<String, Object>{
                             'channelType' => CONSENT_CHANNEL_TYPE,
@@ -187,6 +188,7 @@ public with sharing class EditCustomerCMDMCalloutV2 {
         Boolean isPerson = req.isPersonAccount == null ? true : req.isPersonAccount;
 
         Map<String, Object> attributes = new Map<String, Object>();
+        attributes.put('brand', BRAND);
         attributes.put('customerType', isPerson ? 'INDIVIDUAL' : 'ORGANISATION');
 
         if (isPerson) {
