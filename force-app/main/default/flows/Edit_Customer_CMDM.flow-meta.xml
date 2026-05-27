@@ -492,6 +492,22 @@
             <stringValue>No</stringValue>
         </value>
     </choices>
+    <choices><name>choice_TitleMr</name><choiceText>Mr</choiceText><dataType>String</dataType><value><stringValue>Mr</stringValue></value></choices>
+    <choices><name>choice_TitleMrs</name><choiceText>Mrs</choiceText><dataType>String</dataType><value><stringValue>Mrs</stringValue></value></choices>
+    <choices><name>choice_TitleMs</name><choiceText>Ms</choiceText><dataType>String</dataType><value><stringValue>Ms</stringValue></value></choices>
+    <choices><name>choice_TitleMiss</name><choiceText>Miss</choiceText><dataType>String</dataType><value><stringValue>Miss</stringValue></value></choices>
+    <choices><name>choice_TitleProfessor</name><choiceText>Professor</choiceText><dataType>String</dataType><value><stringValue>Professor</stringValue></value></choices>
+    <choices><name>choice_TitleDr</name><choiceText>Dr</choiceText><dataType>String</dataType><value><stringValue>Dr</stringValue></value></choices>
+    <choices><name>choice_TitleSir</name><choiceText>Sir</choiceText><dataType>String</dataType><value><stringValue>Sir</stringValue></value></choices>
+    <choices><name>choice_TitleReverend</name><choiceText>Reverend</choiceText><dataType>String</dataType><value><stringValue>Reverend</stringValue></value></choices>
+    <choices><name>choice_TitleSister</name><choiceText>Sister</choiceText><dataType>String</dataType><value><stringValue>Sister</stringValue></value></choices>
+    <choices><name>choice_TitleMaster</name><choiceText>Master</choiceText><dataType>String</dataType><value><stringValue>Master</stringValue></value></choices>
+    <choices><name>choice_TitleLady</name><choiceText>Lady</choiceText><dataType>String</dataType><value><stringValue>Lady</stringValue></value></choices>
+    <choices><name>choice_TitleLord</name><choiceText>Lord</choiceText><dataType>String</dataType><value><stringValue>Lord</stringValue></value></choices>
+    <choices><name>choice_GenderMale</name><choiceText>Male</choiceText><dataType>String</dataType><value><stringValue>MALE</stringValue></value></choices>
+    <choices><name>choice_GenderFemale</name><choiceText>Female</choiceText><dataType>String</dataType><value><stringValue>FEMALE</stringValue></value></choices>
+    <choices><name>choice_GenderUnknown</name><choiceText>Unknown</choiceText><dataType>String</dataType><value><stringValue>UNKNOWN</stringValue></value></choices>
+    <choices><name>choice_GenderIndeterminate</name><choiceText>Indeterminate</choiceText><dataType>String</dataType><value><stringValue>INDETERMINATE</stringValue></value></choices>
     <decisions>
         <name>Decision_Any_Changes</name>
         <label>Any Changes?</label>
@@ -611,6 +627,16 @@
         <name>frm_HasInstructions</name>
         <dataType>Boolean</dataType>
         <expression>{!frm_NameChanged} || {!frm_DOBChanged} || {!frm_GenderChanged} || {!frm_MobileChanged} || {!frm_EmailChanged} || {!frm_AddressChanged} || {!var_HasProtectPolicies}</expression>
+    </formulas>
+    <formulas>
+        <name>frm_TitleChanged</name>
+        <dataType>Boolean</dataType>
+        <expression>BLANKVALUE(TEXT({!var_OrigAccount.Salutation}),"") &lt;&gt; BLANKVALUE(TEXT({!var_EditAccount.Salutation}),"")</expression>
+    </formulas>
+    <formulas>
+        <name>frm_GenderChanged</name>
+        <dataType>Boolean</dataType>
+        <expression>BLANKVALUE(TEXT({!var_OrigAccount.FinServ__Gender__pc}),"") &lt;&gt; BLANKVALUE(TEXT({!var_EditAccount.FinServ__Gender__pc}),"")</expression>
     </formulas>
     <recordLookups>
         <name>Get_Account</name>
@@ -1561,4 +1587,4 @@
         <isInput>false</isInput>
         <isOutput>false</isOutput>
     </variables>
-<choices><name>choice_TitleMr</name><choiceText>Mr</choiceText><dataType>String</dataType><value><stringValue>Mr</stringValue></value></choices><choices><name>choice_TitleMrs</name><choiceText>Mrs</choiceText><dataType>String</dataType><value><stringValue>Mrs</stringValue></value></choices><choices><name>choice_TitleMs</name><choiceText>Ms</choiceText><dataType>String</dataType><value><stringValue>Ms</stringValue></value></choices><choices><name>choice_TitleMiss</name><choiceText>Miss</choiceText><dataType>String</dataType><value><stringValue>Miss</stringValue></value></choices><choices><name>choice_TitleProfessor</name><choiceText>Professor</choiceText><dataType>String</dataType><value><stringValue>Professor</stringValue></value></choices><choices><name>choice_TitleDr</name><choiceText>Dr</choiceText><dataType>String</dataType><value><stringValue>Dr</stringValue></value></choices><choices><name>choice_TitleSir</name><choiceText>Sir</choiceText><dataType>String</dataType><value><stringValue>Sir</stringValue></value></choices><choices><name>choice_TitleReverend</name><choiceText>Reverend</choiceText><dataType>String</dataType><value><stringValue>Reverend</stringValue></value></choices><choices><name>choice_TitleSister</name><choiceText>Sister</choiceText><dataType>String</dataType><value><stringValue>Sister</stringValue></value></choices><choices><name>choice_TitleMaster</name><choiceText>Master</choiceText><dataType>String</dataType><value><stringValue>Master</stringValue></value></choices><choices><name>choice_TitleLady</name><choiceText>Lady</choiceText><dataType>String</dataType><value><stringValue>Lady</stringValue></value></choices><choices><name>choice_TitleLord</name><choiceText>Lord</choiceText><dataType>String</dataType><value><stringValue>Lord</stringValue></value></choices><choices><name>choice_GenderMale</name><choiceText>Male</choiceText><dataType>String</dataType><value><stringValue>MALE</stringValue></value></choices><choices><name>choice_GenderFemale</name><choiceText>Female</choiceText><dataType>String</dataType><value><stringValue>FEMALE</stringValue></value></choices><choices><name>choice_GenderUnknown</name><choiceText>Unknown</choiceText><dataType>String</dataType><value><stringValue>UNKNOWN</stringValue></value></choices><choices><name>choice_GenderIndeterminate</name><choiceText>Indeterminate</choiceText><dataType>String</dataType><value><stringValue>INDETERMINATE</stringValue></value></choices><formulas><name>frm_TitleChanged</name><dataType>Boolean</dataType><expression>BLANKVALUE(TEXT({!var_OrigAccount.Salutation}),"") &lt;&gt; BLANKVALUE(TEXT({!var_EditAccount.Salutation}),"")</expression></formulas><formulas><name>frm_GenderChanged</name><dataType>Boolean</dataType><expression>BLANKVALUE(TEXT({!var_OrigAccount.FinServ__Gender__pc}),"") &lt;&gt; BLANKVALUE(TEXT({!var_EditAccount.FinServ__Gender__pc}),"")</expression></formulas></Flow>
+</Flow>
