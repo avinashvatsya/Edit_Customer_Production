@@ -35,8 +35,7 @@ private class EditCustomerPolicyImpactTest {
         for (InsurancePolicy p : policies) {
             participants.add(new InsurancePolicyParticipant(
                 InsurancePolicyId = p.Id,
-                PrimaryParticipantAccountId = acc.Id,
-                BeginDate = Date.today()
+                PrimaryParticipantAccountId = acc.Id
             ));
         }
         insert participants;

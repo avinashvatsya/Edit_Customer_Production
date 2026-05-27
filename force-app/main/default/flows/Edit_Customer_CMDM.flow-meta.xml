@@ -379,10 +379,17 @@
                 <elementReference>var_OrigAccount.Name</elementReference>
             </value>
         </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_EditAccount.FinServ__Gender__pc</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>var_OrigAccount.FinServ__Gender__pc</elementReference>
+            </value>
+        </assignmentItems>
         <connector>
             <targetReference>Screen_Edit_Fields</targetReference>
         </connector>
-    <assignmentItems><assignToReference>var_EditAccount.FinServ__Gender__pc</assignToReference><operator>Assign</operator><value><elementReference>var_OrigAccount.FinServ__Gender__pc</elementReference></value></assignmentItems></assignments>
+    </assignments>
     <assignments>
         <name>Copy_Screen_To_Record</name>
         <label>Copy Screen To Record</label>
@@ -451,10 +458,24 @@
                 <elementReference>Name_Input</elementReference>
             </value>
         </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_EditAccount.Salutation</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Title_Input</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_EditAccount.FinServ__Gender__pc</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Gender_Input</elementReference>
+            </value>
+        </assignmentItems>
         <connector>
             <targetReference>Decision_Any_Changes</targetReference>
         </connector>
-    <assignmentItems><assignToReference>var_EditAccount.Salutation</assignToReference><operator>Assign</operator><value><elementReference>Title_Input</elementReference></value></assignmentItems><assignmentItems><assignToReference>var_EditAccount.FinServ__Gender__pc</assignToReference><operator>Assign</operator><value><elementReference>Gender_Input</elementReference></value></assignmentItems></assignments>
+    </assignments>
     <choices>
         <name>choice_MarketingYes</name>
         <choiceText>Yes</choiceText>
