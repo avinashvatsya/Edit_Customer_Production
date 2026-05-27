@@ -629,12 +629,14 @@
         <allowBack>false</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
-        <fields><name>Source_System_ID_Display</name><fieldText>&lt;p&gt;&lt;b&gt;Source System ID:&lt;/b&gt; {!var_OrigAccount.SourceSystemId__c}&lt;/p&gt;&lt;p style="color:#706e6b; font-size:12px;"&gt;Reference only — not editable.&lt;/p&gt;</fieldText><fieldType>DisplayText</fieldType></fields><connector>
+        <connector>
             <targetReference>Copy_Screen_To_Record</targetReference>
         </connector>
-        <nextOrFinishButtonLabel>Save</nextOrFinishButtonLabel>
-        <showFooter>true</showFooter>
-        <showHeader>true</showHeader>
+        <fields>
+            <name>Source_System_ID_Display</name>
+            <fieldText>&lt;p&gt;&lt;b&gt;Source System ID:&lt;/b&gt; {!var_OrigAccount.SourceSystemId__c}&lt;/p&gt;&lt;p style="color:#706e6b; font-size:12px;"&gt;Reference only — not editable.&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
         <fields>
             <name>Privacy_Warning</name>
             <fieldText>&lt;p style="background-color:#FFFBEA; border-left:4px solid #F2C94C; padding:12px; border-radius:4px;"&gt;&lt;b&gt;Important:&lt;/b&gt; Customers can only update their own information.&lt;/p&gt;</fieldText>
@@ -998,6 +1000,9 @@
                 <assignToReference>var_AddressKey</assignToReference>
             </outputParameters>
         </fields>
+        <nextOrFinishButtonLabel>Save</nextOrFinishButtonLabel>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
     </screens>
     <screens>
         <name>Screen_Success</name>
@@ -1007,13 +1012,13 @@
         <allowBack>false</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
-        <showFooter>true</showFooter>
-        <showHeader>true</showHeader>
         <fields>
             <name>Screen_Success_Message</name>
             <fieldText>&lt;p&gt;&lt;b&gt;Customer details submitted successfully.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Changes will reflect on the Account shortly.&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
         </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
     </screens>
     <screens>
         <name>Screen_Error</name>
@@ -1023,13 +1028,13 @@
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
-        <showFooter>true</showFooter>
-        <showHeader>true</showHeader>
         <fields>
             <name>Screen_Error_Message</name>
             <fieldText>&lt;p style='color:#c23934;'&gt;&lt;b&gt;We couldn't submit the changes.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;{!var_CMDMError}&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
         </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
     </screens>
     <screens>
         <name>Screen_No_Changes</name>
@@ -1039,13 +1044,13 @@
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
-        <showFooter>true</showFooter>
-        <showHeader>true</showHeader>
         <fields>
             <name>Screen_No_Changes_Message</name>
             <fieldText>&lt;p&gt;No changes detected. Please go back and edit, or close this flow.&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
         </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
     </screens>
     <start>
         <locationX>0</locationX>
